@@ -1,3 +1,5 @@
+package backend;
+
 import java.net.Socket;
 import java.util.Scanner;
 import java.io.IOException;

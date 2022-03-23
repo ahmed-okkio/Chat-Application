@@ -2,7 +2,7 @@ package gui;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
-
+import java.net.Socket;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -13,8 +13,14 @@ import java.awt.Font;
 import javax.swing.JButton;
 import javax.swing.JTextField;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.awt.event.ActionEvent;
 import backend.Client;
+
 
 public class Window_1 extends JFrame {
 
@@ -86,64 +92,83 @@ public class Window_1 extends JFrame {
 			
 				
 				
-				if (UniqueID.contains("1")) {
-					//JOptionPane.showMessageDialog(null,  "Redirecting Now", "Success", JOptionPane.INFORMATION_MESSAGE);
-					
-					//Window_2 info= new Window_2();
-					//Window_2.main(null);
-					
-				}
-				else {
-					JOptionPane.showMessageDialog(null, "Invalid ID Details", "FaiLed Attempt", JOptionPane.ERROR_MESSAGE);
-					
-					
-					
-					
-				}
+//				if (UniqueID.contains("1")) {
+//					//JOptionPane.showMessageDialog(null,  "Redirecting Now", "Success", JOptionPane.INFORMATION_MESSAGE);
+//					
+//					//Window_2 info= new Window_2();
+//					//Window_2.main(null);
+//					
+//				}
+//				//else {
+//				//	JOptionPane.showMessageDialog(null, "Invalid ID Details", "FaiLed Attempt", JOptionPane.ERROR_MESSAGE);
+//					
+//					
+//					
+//					
+//				}
+//				
+//				//if (Port.contains("20")) {
+//					//JOptionPane.showMessageDialog(null,  "Redirecting Now", "Success", JOptionPane.INFORMATION_MESSAGE);
+//					
+//					//Window_2 info= new Window_2();
+//					//Window_2.main(null);
+//					
+//				}
+//				else {
+//					JOptionPane.showMessageDialog(null, "Invalid Port Details", "FaiLed Attempt", JOptionPane.ERROR_MESSAGE);
+//					
+//					
+//					
+//					
+//				}
+//				if (IP.contains("1") && IP2.contains("2") && IP3.contains("3") && IP4.contains("4")  ) {
+//					JOptionPane.showMessageDialog(null,  "Redirecting Now", "Success", JOptionPane.INFORMATION_MESSAGE);
+//					
+//					//Window_2 info= new Window_2();
+//					//Window_2.main(null);
+//					
+//				}
+//				else {
+//					JOptionPane.showMessageDialog(null, "Invalid IP Details", "FaiLed Attempt", JOptionPane.ERROR_MESSAGE);
+//					
+//					
+//					
+//					
+//				}
 				
-				if (Port.contains("20")) {
-					//JOptionPane.showMessageDialog(null,  "Redirecting Now", "Success", JOptionPane.INFORMATION_MESSAGE);
-					
-					//Window_2 info= new Window_2();
-					//Window_2.main(null);
-					
-				}
-				else {
-					JOptionPane.showMessageDialog(null, "Invalid Port Details", "FaiLed Attempt", JOptionPane.ERROR_MESSAGE);
+				try {
 					
 					
+		            
+					Socket socket = new Socket("81.110.249.60", Integer.parseInt(Port));
+					Client NewClient = new Client(socket, UniqueID);
+					Window_2 info= new Window_2(NewClient);
+					info.setVisible(true);
+					System.out.println("Hello");
 					
-					
-				}
-				if (IP.contains("1") && IP2.contains("2") && IP3.contains("3") && IP4.contains("4")  ) {
-					JOptionPane.showMessageDialog(null,  "Redirecting Now", "Success", JOptionPane.INFORMATION_MESSAGE);
-					
-					//Window_2 info= new Window_2();
-					//Window_2.main(null);
-					
-				}
-				else {
-					JOptionPane.showMessageDialog(null, "Invalid IP Details", "FaiLed Attempt", JOptionPane.ERROR_MESSAGE);
-					
-					
-					
-					
-				}
-				if (IP.contains("1") && IP2.contains("2") && IP3.contains("3") && IP4.contains("4") && UniqueID.contains("1") && Port.contains("20")  ) {
-					//JOptionPane.showMessageDialog(null,  "Redirecting Now", "Success", JOptionPane.INFORMATION_MESSAGE);
-					
-					Window_2 info= new Window_2();
-					Window_2.main(null);
-					
-				}
-				else {
-					JOptionPane.showMessageDialog(null, "Try Again", "FaiLed Attempt", JOptionPane.ERROR_MESSAGE);
-					
-					
-					
-					
-				}
+		        } catch (IOException error) {
+		        	
+		        	error.printStackTrace();
+		        	
+		        }
 				
+				
+//				if (IP.contains("1") && IP2.contains("2") && IP3.contains("3") && IP4.contains("4") && UniqueID.contains("1") && Port.contains("20")  ) {
+//					//JOptionPane.showMessageDialog(null,  "Redirecting Now", "Success", JOptionPane.INFORMATION_MESSAGE);
+//					
+//					
+//					
+//					
+//				
+//				}
+//				else {
+//					JOptionPane.showMessageDialog(null, "Try Again", "FaiLed Attempt", JOptionPane.ERROR_MESSAGE);
+//					
+//					
+//					
+//					
+//				}
+//				
 				
 			}
 			
