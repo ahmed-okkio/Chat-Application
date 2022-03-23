@@ -50,7 +50,7 @@ public class Client {
         }
 
     }
-//Hello
+
     public void listenforMessage() {
         new Thread(new Runnable() {
             @Override
