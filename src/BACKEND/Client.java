@@ -8,7 +8,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.Scanner;
-import gui.Window_1;
+import java.util.ArrayList;
 
 
 
@@ -21,7 +21,13 @@ public class Client {
     public String memberUsernames[];
     // ROLES: 0 = Unassigned, 1 = Coordinator, 2 = Member
     private int role = 0;
-
+    class MemberState {
+      public String ID;
+      public String IP;
+      public int pingAttempts = 3;  
+    };
+    private ArrayList<MemberState> members = new ArrayList<>();
+    
     public Client(Socket socket, String username) {
         try {
             this.socket = socket;
@@ -30,6 +36,7 @@ public class Client {
             this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             
             this.username = username;
+            System.out.println("Welcome to the chat room.");
         } catch (IOException error) {
             shutdownClient(socket, bufferedReader, bufferedWriter);
         }
@@ -70,7 +77,9 @@ public class Client {
 
                         if(messageType.equals("ROLE")) {
                             role = Integer.parseInt(message);
-                            welcomeMessage();
+                            if(role == 1) {
+                                System.out.println("You are now the coordinator.");
+                            } 
                         } else if(messageType.equals("PING")) {
                             keepAplive();
                         } else {
@@ -84,18 +93,16 @@ public class Client {
         }).start();
     }
 
-    private void welcomeMessage() {
-        switch(role) {
-            case 1:
-                System.out.println("Welcome to the chat room, you are the coordinator.");
-                break;
-            case 2:
-                System.out.println("Welcome to the chat room.");
-        }
-    }
 
     public void keepAplive() {
-
+        try {
+            bufferedWriter.write("PONG," + "Ponging");
+            bufferedWriter.newLine();
+            bufferedWriter.flush();
+        } catch (IOException error) {
+            // shutdownClient(socket, bufferedReader, bufferedWriter);
+            error.printStackTrace();
+        }
     }
 
     public void shutdownClient(Socket socket, BufferedReader bufferedReader, BufferedWriter bufferedWriter) {

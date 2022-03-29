@@ -19,8 +19,9 @@ public class ClientHandler implements Runnable{
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
     private Timer timer = new Timer();
-    public int lifeScore = 3;
+    public int pingAttempts = 3;
     private String clientUsername;
+    private boolean isConnected = false;
 
     public ClientHandler(Socket socket) {
         try {
@@ -30,12 +31,15 @@ public class ClientHandler implements Runnable{
             this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             
             this.clientUsername = bufferedReader.readLine();
-            
-            assignClientRole();
+            socket.getRemoteSocketAddress();
+            assignClientRole(2);
+            updateCoordinatorState();
             clientHandlers.add(this);
             checkClientAlive();
             
-            broadcastMessage("SERVER:" + clientUsername + "has entered the room.");
+            isConnected = true;
+            broadcastMessage("SERVER: " + clientUsername + " has entered the room.");
+            System.out.println(clientUsername + " connected.");
         } catch (IOException error)  {
             shutdownClientHandler(socket, bufferedReader, bufferedWriter);
         }
@@ -47,20 +51,19 @@ public class ClientHandler implements Runnable{
         String messageType;
         String message;
 
-        while(socket.isConnected()) {
+        while(isConnected) {
             try {
                 messageFromChat = bufferedReader.readLine().split(",");
                 messageType = messageFromChat[0];
                 message = messageFromChat[1];
                 if (messageType.equals("PONG")) {
-                    lifeScore = 3;
+                    pingAttempts = 3;
+                    
                 } else {
-
                     broadcastMessage(message);
                 }
             } catch (IOException error) {
-                shutdownClientHandler(socket, bufferedReader, bufferedWriter);
-                break;
+                
             }
         }
     }
@@ -74,17 +77,13 @@ public class ClientHandler implements Runnable{
                     clientHandler.bufferedWriter.flush();
                 }
             } catch (IOException error) {
-                shutdownClientHandler(socket, bufferedReader, bufferedWriter);
             }
         }
     }
 
-    public void removeClientHandler() {
-        clientHandlers.remove(this);
-        broadcastMessage("SERVER:" + clientUsername + "has left the room.");
-    }
+  
 
-    private void assignClientRole() {
+    private void assignClientRole(int role) {
         // ROLES: 0 = Unassigned, 1 = Coordinator, 2 = Member
         try {
             if (clientHandlers.isEmpty()) {
@@ -92,13 +91,16 @@ public class ClientHandler implements Runnable{
                 this.bufferedWriter.newLine();
                 this.bufferedWriter.flush();
             } else {
-                this.bufferedWriter.write("ROLE," + 2);
+                this.bufferedWriter.write("ROLE," + role);
                 this.bufferedWriter.newLine();
                 this.bufferedWriter.flush();
             }
         } catch (IOException error) {
-            shutdownClientHandler(socket, bufferedReader, bufferedWriter);
         }
+    }
+
+    private void updateCoordinatorState() {
+
     }
 
     private void checkClientAlive() {
@@ -106,23 +108,38 @@ public class ClientHandler implements Runnable{
             @Override
             public void run() {
                 try {
-                    //Ping client
-                    bufferedWriter.write("PING,"+ "Pinging Client");
-                    bufferedWriter.newLine();
-                    bufferedWriter.flush();
+                    pingAttempts--;
+                    if(pingAttempts > 0) {
+                         //Ping client
+                        bufferedWriter.write("PING,"+ "Pinging Client");
+                        bufferedWriter.newLine();
+                        bufferedWriter.flush();
+                        
+                    } else {
+                        shutdownClientHandler(socket, bufferedReader, bufferedWriter);
+                    }
 
-                    lifeScore--;
-                    System.out.println("Pinging");
                 } catch (IOException error) {
-                    shutdownClientHandler(socket, bufferedReader, bufferedWriter);
+                    // shutdownClientHandler(socket, bufferedReader, bufferedWriter);
                 }
             }
         }, 0, 3000);
     }
 
+    public void removeClientHandler() {
+        clientHandlers.remove(this);
+        System.out.println("Disconnecting "+ clientUsername);
+        broadcastMessage("SERVER: " + clientUsername + " has left the room.");
+        clientHandlers.get(0).assignClientRole(1);
+    }
+
     public void shutdownClientHandler(Socket socket, BufferedReader bufferedReader, BufferedWriter bufferedWriter) {
+        isConnected = false;
         removeClientHandler();
         try {
+            if ( timer != null) {
+                timer.cancel();
+            }
             if ( bufferedReader != null) {
                 bufferedReader.close();
             }
@@ -131,9 +148,6 @@ public class ClientHandler implements Runnable{
             }
             if ( socket != null) {
                 socket.close();
-            }
-            if ( timer != null) {
-                timer.cancel();
             }
         } catch (IOException error) {
             error.printStackTrace();
