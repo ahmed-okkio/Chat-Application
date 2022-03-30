@@ -8,51 +8,75 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.Scanner;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.function.Function;
 import java.util.ArrayList;
-
+import gui.MainRoom;
+import t.p;
 
 
 public class Client {
     private Socket socket;
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
-    
+    public MainRoom mainRoom = null;
+
     public String username;
     public String memberUsernames[];
+    private Timer timer = new Timer();
     // ROLES: 0 = Unassigned, 1 = Coordinator, 2 = Member
-    private int role = 0;
-    class MemberState {
-      public String ID;
-      public String IP;
-      public int pingAttempts = 3;  
+    public int role = 0;
+    public class MemberState {
+        public MemberState(String username, String address) {
+            this.ID = username;
+            this.IP = address.toString();
+        }
+        public String ID;
+        public String IP;
     };
-    private ArrayList<MemberState> members = new ArrayList<>();
-    
+    public ArrayList<MemberState> members = new ArrayList<>();
+
     public Client(Socket socket, String username) {
         try {
             this.socket = socket;
             
             this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            
             this.username = username;
+
+            // Registering username with the server.
+            bufferedWriter.write(username);
+            bufferedWriter.newLine();
+            bufferedWriter.flush();
+
+            this.listenforMessage();
+ 
+            while (role == 0){
+            }
+
             System.out.println("Welcome to the chat room.");
         } catch (IOException error) {
             shutdownClient(socket, bufferedReader, bufferedWriter);
         }
 
     }
+    public void EnableCoordinator() {
+        // checkClientAlive();
+        if (mainRoom != null) {
+            mainRoom.updateMessages(MainRoom.Rooms.MAIN_ROOM,"You are now the coordinator.");
+            mainRoom.updateCoordinator(true);
+            System.out.println("You are now the coordinator.");
+        }
+        // requestMemberState();
+    }
 
     public void sendMessage() {
         try {
-            bufferedWriter.write(username);
-            bufferedWriter.newLine();
-            bufferedWriter.flush();
-
             Scanner scanner = new Scanner(System.in);
             while ( socket.isConnected()) {
                 String message = scanner.nextLine();
-                bufferedWriter.write("MESSAGE,"+username + ": "+ message);
+                bufferedWriter.write("MAINROOM,"+username + ": "+ message);
                 bufferedWriter.newLine();
                 bufferedWriter.flush();
             }
@@ -62,28 +86,66 @@ public class Client {
         }
 
     }
-
+    public void sendMessageUI(String message) {
+        try {
+            if ( socket.isConnected()) {
+                bufferedWriter.write("MAINROOM,"+username + ": "+ message);
+                bufferedWriter.newLine();
+                bufferedWriter.flush();
+                
+                mainRoom.updateMessages(MainRoom.Rooms.MAIN_ROOM,username + ": "+ message);
+            }
+        } catch (IOException error) {
+            shutdownClient(socket, bufferedReader, bufferedWriter);
+        }
+        
+    }
+    
     public void listenforMessage() {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 String messageFromChat[];
-
+                String rawMessage;
+                String messageType;
+                String message;
                 while(socket.isConnected()) {
                     try {
-                        messageFromChat = bufferedReader.readLine().split(",");
-                        String messageType = messageFromChat[0];
-                        String message = messageFromChat[1];
+                        rawMessage = bufferedReader.readLine();
+                        // System.out.println("RAW MESSAGE: " + rawMessage);
+                        messageFromChat = rawMessage.split(",");
+                        messageType = messageFromChat[0];
+                        message = messageFromChat[1];
 
                         if(messageType.equals("ROLE")) {
+
                             role = Integer.parseInt(message);
                             if(role == 1) {
-                                System.out.println("You are now the coordinator.");
+                                EnableCoordinator();
                             } 
+
                         } else if(messageType.equals("PING")) {
-                            keepAplive();
+                            if(messageFromChat[1].equals(username)) {
+                                keepAlive();
+                            }
+
                         } else {
-                            System.out.println(message);
+                            if (mainRoom != null) {
+                                mainRoom.updateMessages(messageType,message);
+                            }
+
+                        }
+
+                        if (messageType.equals("COMMAND")) {
+                            if(messageFromChat[1].equals("CLEANSTATE")) {
+                                members.clear();
+                            }
+                            if(messageFromChat[1].equals("UPDATESTATE")) {
+                                //INDEX 2 = ID, 3 = IP
+                                MemberState updatedMember = new MemberState(messageFromChat[2],messageFromChat[3]);
+                                members.add(updatedMember);
+                            }
+                            
                         }
                     } catch (IOException error) {
                         shutdownClient(socket, bufferedReader, bufferedWriter);
@@ -93,16 +155,25 @@ public class Client {
         }).start();
     }
 
-
-    public void keepAplive() {
+    public void keepAlive() {
         try {
-            bufferedWriter.write("PONG," + "Ponging");
+            bufferedWriter.write("PONG," +username);
             bufferedWriter.newLine();
             bufferedWriter.flush();
         } catch (IOException error) {
             // shutdownClient(socket, bufferedReader, bufferedWriter);
             error.printStackTrace();
         }
+    }
+    public void requestClientHandlerShutdown() {
+        try {
+            bufferedWriter.write("COMMAND," + "SHUTDOWN,"+username);
+            bufferedWriter.newLine();
+            bufferedWriter.flush();
+        } catch (IOException error) {
+            // shutdownClient(socket, bufferedReader, bufferedWriter);
+            error.printStackTrace();
+        }  
     }
 
     public void shutdownClient(Socket socket, BufferedReader bufferedReader, BufferedWriter bufferedWriter) {

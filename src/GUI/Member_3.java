@@ -72,8 +72,8 @@ public class Member_3 extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				
 				if (Main_Button.isEnabled()) {
-					Main_Room info= new Main_Room();
-					Main_Room.main(null);
+					MainRoom info= new MainRoom();
+					MainRoom.main(null);
 					
 				}
 				else {
@@ -93,8 +93,8 @@ public class Member_3 extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				
 				if (M1_Button.isEnabled()) {
-					Member_1 info= new Member_1();
-					Member_1.main(null);
+					MemberChat info= new MemberChat();
+					MemberChat.main(null);
 					
 				}
 				else {

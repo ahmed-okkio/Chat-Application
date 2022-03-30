@@ -26,11 +26,9 @@ public class Window_1 extends JFrame {
 
 	private JPanel contentPane;
 	private JTextField ID_Field;
+	private JTextField ip_Address;
 	private JTextField Port_Field;
-	private JTextField IP_1;
-	private JTextField IP_2;
-	private JTextField IP_3;
-	private JTextField IP_4;
+
 
 	/**
 	 * Launch the application.
@@ -47,7 +45,12 @@ public class Window_1 extends JFrame {
 			}
 		});
 	}
-
+	private void InitializeChat(Client NewClient){
+		Window_2 info= new Window_2(NewClient);
+		info.setVisible(true);
+		setVisible(false);
+		dispose();	
+	}
 	/**
 	 * Create the frame.
 	 */
@@ -70,106 +73,72 @@ public class Window_1 extends JFrame {
 		ID_Label.setBounds(165, 105, 84, 35);
 		contentPane.add(ID_Label);
 		
-		JLabel Port_Label = new JLabel("Port:");
-		Port_Label.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		Port_Label.setBounds(155, 166, 84, 35);
-		contentPane.add(Port_Label);
-		
 		JLabel IP_Label = new JLabel("IP Address:");
 		IP_Label.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		IP_Label.setBounds(97, 232, 118, 35);
+		IP_Label.setBounds(97, 166, 118, 35);
 		contentPane.add(IP_Label);
+		
+		JLabel Port_Label = new JLabel("Port:");
+		Port_Label.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		Port_Label.setBounds(155, 232, 84, 35);
+		contentPane.add(Port_Label);
 		
 		JButton Connect = new JButton("CONNECT");
 		Connect.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String UniqueID = ID_Field.getText();
 				String Port = Port_Field.getText();
-				String IP = IP_1.getText();
-				String IP2 = IP_2.getText();
-				String IP3 = IP_3.getText();
-				String IP4 = IP_4.getText();
-			
-				
-				
-//				if (UniqueID.contains("1")) {
-//					//JOptionPane.showMessageDialog(null,  "Redirecting Now", "Success", JOptionPane.INFORMATION_MESSAGE);
-//					
-//					//Window_2 info= new Window_2();
-//					//Window_2.main(null);
-//					
-//				}
-//				//else {
-//				//	JOptionPane.showMessageDialog(null, "Invalid ID Details", "FaiLed Attempt", JOptionPane.ERROR_MESSAGE);
-//					
-//					
-//					
-//					
-//				}
-//				
-//				//if (Port.contains("20")) {
-//					//JOptionPane.showMessageDialog(null,  "Redirecting Now", "Success", JOptionPane.INFORMATION_MESSAGE);
-//					
-//					//Window_2 info= new Window_2();
-//					//Window_2.main(null);
-//					
-//				}
-//				else {
-//					JOptionPane.showMessageDialog(null, "Invalid Port Details", "FaiLed Attempt", JOptionPane.ERROR_MESSAGE);
-//					
-//					
-//					
-//					
-//				}
-//				if (IP.contains("1") && IP2.contains("2") && IP3.contains("3") && IP4.contains("4")  ) {
-//					JOptionPane.showMessageDialog(null,  "Redirecting Now", "Success", JOptionPane.INFORMATION_MESSAGE);
-//					
-//					//Window_2 info= new Window_2();
-//					//Window_2.main(null);
-//					
-//				}
-//				else {
-//					JOptionPane.showMessageDialog(null, "Invalid IP Details", "FaiLed Attempt", JOptionPane.ERROR_MESSAGE);
-//					
-//					
-//					
-//					
-//				}
-				
+				String IP = ip_Address.getText();
 				try {
-					
-					
-		            
-					Socket socket = new Socket("81.110.249.60", Integer.parseInt(Port));
+					if (UniqueID.isEmpty()){
+						throw new IOException("ID Can't be empty");
+					}
+					Socket socket = new Socket("localhost", 25565);
+	
 					Client NewClient = new Client(socket, UniqueID);
-					Window_2 info= new Window_2(NewClient);
-					info.setVisible(true);
-					System.out.println("Hello");
+					Window_2 newWindow = new Window_2(NewClient);
+					newWindow.setVisible(true);
+					setVisible(false);
+					dispose();
+
+				} catch (IOException error) {
+					JOptionPane.showMessageDialog(null, "Invalid IP Address / Server Unavailable", "FaiLed Attempt", JOptionPane.ERROR_MESSAGE);
+					error.printStackTrace();
 					
-		        } catch (IOException error) {
-		        	
-		        	error.printStackTrace();
-		        	
-		        }
-				
-				
-//				if (IP.contains("1") && IP2.contains("2") && IP3.contains("3") && IP4.contains("4") && UniqueID.contains("1") && Port.contains("20")  ) {
-//					//JOptionPane.showMessageDialog(null,  "Redirecting Now", "Success", JOptionPane.INFORMATION_MESSAGE);
-//					
-//					
-//					
-//					
-//				
-//				}
-//				else {
-//					JOptionPane.showMessageDialog(null, "Try Again", "FaiLed Attempt", JOptionPane.ERROR_MESSAGE);
-//					
-//					
-//					
-//					
-//				}
-//				
-				
+				}
+				// try {
+					
+				// 	if (UniqueID.isEmpty()){
+				// 		throw new NumberFormatException("ID Can't be empty");
+				// 	}
+				// 	int ID = Integer.parseInt(UniqueID);
+				// 	try {
+				// 		int PORT = Integer.parseInt(Port);
+				// 		try {
+					
+					
+				// 			JOptionPane.showMessageDialog(null,  "Connecting", "Attempting", JOptionPane.INFORMATION_MESSAGE);
+				// 			Socket socket = new Socket(IP, PORT);
+
+				// 			Client NewClient = new Client(socket, UniqueID);
+				// 			Window_2 info= new Window_2(NewClient);
+				// 			info.setVisible(true);
+				// 			setVisible(false);
+				// 			dispose();
+							
+				// 		} catch (IOException error) {
+				// 			JOptionPane.showMessageDialog(null, "Invalid IP Address / Server Unavailable", "FaiLed Attempt", JOptionPane.ERROR_MESSAGE);
+				// 			error.printStackTrace();
+							
+				// 		}
+				// 	} catch (NumberFormatException  error) {
+				// 		JOptionPane.showMessageDialog(null, "Invalid PORT Details", "FaiLed Attempt", JOptionPane.ERROR_MESSAGE);
+				// 	}
+				// } catch (NumberFormatException  error) {
+				// 	JOptionPane.showMessageDialog(null, "Invalid ID Details", "FaiLed Attempt", JOptionPane.ERROR_MESSAGE);
+					
+				// }
+
 			}
 			
 			
@@ -186,41 +155,23 @@ public class Window_1 extends JFrame {
 		contentPane.add(ID_Field);
 		ID_Field.setColumns(10);
 		
+		ip_Address = new JTextField();
+		ip_Address.setBounds(227, 171, 233, 35);
+		contentPane.add(ip_Address);
+		ip_Address.setColumns(10);
+		
 		Port_Field = new JTextField();
-		Port_Field.setBounds(227, 171, 233, 33);
+		Port_Field.setBounds(227, 236, 55, 33);
 		contentPane.add(Port_Field);
 		Port_Field.setColumns(10);
 		
-		IP_1 = new JTextField();
-		IP_1.setBounds(227, 236, 52, 35);
-		contentPane.add(IP_1);
-		IP_1.setColumns(10);
-		
-		IP_2 = new JTextField();
-		IP_2.setColumns(10);
-		IP_2.setBounds(289, 236, 52, 35);
-		contentPane.add(IP_2);
-		
-		IP_3 = new JTextField();
-		IP_3.setColumns(10);
-		IP_3.setBounds(351, 236, 52, 35);
-		contentPane.add(IP_3);
-		
-		IP_4 = new JTextField();
-		IP_4.setColumns(10);
-		IP_4.setBounds(413, 236, 52, 35);
-		contentPane.add(IP_4);
 		
 		JButton Reset = new JButton("RESET");
 		Reset.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ID_Field.setText(null);
+				ip_Address.setText(null);
 				Port_Field.setText(null);
-				IP_1.setText(null);
-				IP_2.setText(null);
-				IP_3.setText(null);
-				IP_4.setText(null);
-				
 				
 			}
 		});
