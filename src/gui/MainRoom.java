@@ -98,11 +98,13 @@ public class MainRoom extends JFrame {
 
 	public void updateMembersList() {
 		int y = 90;
-		for(int i = 0; i < memberButtons.size(); i++) {
-			memberButtons.get(0) = 
-			M1_Button = new JButton("Member 1");
-			M1_Button.setFont(new Font("Tahoma", Font.PLAIN, 8));
-			M1_Button.addActionListener(new ActionListener() {
+		for (JButton button : memberButtons) {
+			contentPane.remove(button);
+		}
+		for(int i = 0; i < client.members.size(); i++) {
+			JButton button = memberButtons.get(i);
+			button.setText(client.members.get(i).ID);
+			button.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					
 					if (M1_Button.isEnabled()) {
@@ -117,19 +119,11 @@ public class MainRoom extends JFrame {
 				}
 				
 			});
-			M1_Button.setBounds(558,y, 85, 49);
+			button.setBounds(558,y, 85, 49);
+			contentPane.add(button);
 			y += 90;
 		}
-		M1_Button.setText(client.members.get(0).ID);
-		contentPane.add(M1_Button);
-		contentPane.repaint();
 
-		M2_Button.setText(client.members.get(1).ID);
-		contentPane.add(M2_Button);
-
-
-		M3_Button.setText(client.members.get(2).ID);
-		contentPane.add(M3_Button);
 		contentPane.repaint();
 	}
 	public MainRoom(Client client) {
@@ -145,12 +139,15 @@ public class MainRoom extends JFrame {
 		contentPane.setLayout(null);
 		
 		M1_Button = new JButton("Member 1");
+		M1_Button.setFont(new Font("Tahoma", Font.PLAIN, 8));
 		memberButtons.add(M1_Button);
 		M2_Button = new JButton("Member 2");
+		M2_Button.setFont(new Font("Tahoma", Font.PLAIN, 8));
 		memberButtons.add(M2_Button);
 		M3_Button = new JButton("Member 3");
+		M3_Button.setFont(new Font("Tahoma", Font.PLAIN, 8));
 		memberButtons.add(M3_Button);
-		
+		updateMembersList();
 		messageField = new JTextArea();
 		
 		messageField.setEditable(false);
@@ -226,66 +223,66 @@ public class MainRoom extends JFrame {
 			contentPane.add(Server_Button);
 		}
 		
-		M1_Button = new JButton("Member 1");
-		M1_Button.setFont(new Font("Tahoma", Font.PLAIN, 8));
-		M1_Button.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+		// M1_Button = new JButton("Member 1");
+		// M1_Button.setFont(new Font("Tahoma", Font.PLAIN, 8));
+		// M1_Button.addActionListener(new ActionListener() {
+		// 	public void actionPerformed(ActionEvent e) {
 				
-				if (M1_Button.isEnabled()) {
-					MemberChat info= new MemberChat(reference);
-					info.setVisible(true);
-					setVisible(false);
-				}
-				else {
-					JOptionPane.showMessageDialog(null, "No Button Pressed", "FaiLed Attempt", JOptionPane.ERROR_MESSAGE);
+		// 		if (M1_Button.isEnabled()) {
+		// 			MemberChat info= new MemberChat(reference);
+		// 			info.setVisible(true);
+		// 			setVisible(false);
+		// 		}
+		// 		else {
+		// 			JOptionPane.showMessageDialog(null, "No Button Pressed", "FaiLed Attempt", JOptionPane.ERROR_MESSAGE);
 
-				}
-			}
+		// 		}
+		// 	}
 			
-		});
+		// });
 		
-		M1_Button.setBounds(558, 91, 85, 49);
+		// M1_Button.setBounds(558, 91, 85, 49);
 		
 		
-		M2_Button = new JButton("Member 2");
-		M2_Button.setFont(new Font("Tahoma", Font.PLAIN, 8));
-		M2_Button.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+		// M2_Button = new JButton("Member 2");
+		// M2_Button.setFont(new Font("Tahoma", Font.PLAIN, 8));
+		// M2_Button.addActionListener(new ActionListener() {
+		// 	public void actionPerformed(ActionEvent e) {
 				
-				if (M2_Button.isEnabled()) {
-					Member_2 info= new Member_2();
-					Member_2.main(null);
+		// 		if (M2_Button.isEnabled()) {
+		// 			Member_2 info= new Member_2();
+		// 			Member_2.main(null);
 					
-				}
-				else {
-					JOptionPane.showMessageDialog(null, "No Button Pressed", "FaiLed Attempt", JOptionPane.ERROR_MESSAGE);
+		// 		}
+		// 		else {
+		// 			JOptionPane.showMessageDialog(null, "No Button Pressed", "FaiLed Attempt", JOptionPane.ERROR_MESSAGE);
 						
-				}
-			}
+		// 		}
+		// 	}
 			
-		});
+		// });
 		
-		M2_Button.setBounds(558, 161, 85, 49);
+		// M2_Button.setBounds(558, 161, 85, 49);
 		
 		
-		M3_Button = new JButton("Member 3");
-		M3_Button.setFont(new Font("Tahoma", Font.PLAIN, 8));
-		M3_Button.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+		// M3_Button = new JButton("Member 3");
+		// M3_Button.setFont(new Font("Tahoma", Font.PLAIN, 8));
+		// M3_Button.addActionListener(new ActionListener() {
+		// 	public void actionPerformed(ActionEvent e) {
 				
-				if (M3_Button.isEnabled()) {
-					Member_3 info= new Member_3();
-					Member_3.main(null);
+		// 		if (M3_Button.isEnabled()) {
+		// 			Member_3 info= new Member_3();
+		// 			Member_3.main(null);
 					
-				}
-				else {
-					JOptionPane.showMessageDialog(null, "No Button Pressed", "FaiLed Attempt", JOptionPane.ERROR_MESSAGE);
+		// 		}
+		// 		else {
+		// 			JOptionPane.showMessageDialog(null, "No Button Pressed", "FaiLed Attempt", JOptionPane.ERROR_MESSAGE);
 						
-				}
-			}
+		// 		}
+		// 	}
 			
-		});
-		M3_Button.setBounds(558, 233, 85, 49);
+		// });
+		// M3_Button.setBounds(558, 233, 85, 49);
 
 		
 		JButton Exit_Button = new JButton("Exit ");

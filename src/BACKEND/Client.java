@@ -144,6 +144,9 @@ public class Client {
                                 //INDEX 2 = ID, 3 = IP
                                 MemberState updatedMember = new MemberState(messageFromChat[2],messageFromChat[3]);
                                 members.add(updatedMember);
+                                if (mainRoom != null) {
+                                    mainRoom.updateMembersList();
+                                }
                             }
                             
                         }
