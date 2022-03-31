@@ -30,9 +30,7 @@ public class Window_1 extends JFrame {
 	private JTextField Port_Field;
 
 
-	/**
-	 * Launch the application.
-	 */
+
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -51,9 +49,8 @@ public class Window_1 extends JFrame {
 		setVisible(false);
 		dispose();	
 	}
-	/**
-	 * Create the frame.
-	 */
+
+
 	public Window_1() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 665, 445);
@@ -89,55 +86,40 @@ public class Window_1 extends JFrame {
 				String UniqueID = ID_Field.getText();
 				String Port = Port_Field.getText();
 				String IP = ip_Address.getText();
+				
+				
 				try {
+					
 					if (UniqueID.isEmpty()){
-						throw new IOException("ID Can't be empty");
+						throw new NumberFormatException("ID Can't be empty");
 					}
-					Socket socket = new Socket("localhost", 25565);
-	
-					Client NewClient = new Client(socket, UniqueID);
-					Window_2 newWindow = new Window_2(NewClient);
-					newWindow.setVisible(true);
-					setVisible(false);
-					dispose();
+					int ID = Integer.parseInt(UniqueID);
+					try {
+						int PORT = Integer.parseInt(Port);
+						try {
+					
+					
+							JOptionPane.showMessageDialog(null,  "Connecting", "Attempting", JOptionPane.INFORMATION_MESSAGE);
+							Socket socket = new Socket(IP, PORT);
 
-				} catch (IOException error) {
-					JOptionPane.showMessageDialog(null, "Invalid IP Address / Server Unavailable", "FaiLed Attempt", JOptionPane.ERROR_MESSAGE);
-					error.printStackTrace();
+							Client NewClient = new Client(socket, UniqueID);
+							Window_2 info= new Window_2(NewClient);
+							info.setVisible(true);
+							setVisible(false);
+							dispose();
+							
+						} catch (IOException error) {
+							JOptionPane.showMessageDialog(null, "Invalid IP Address / Server Unavailable", "FaiLed Attempt", JOptionPane.ERROR_MESSAGE);
+							error.printStackTrace();
+							
+						}
+					} catch (NumberFormatException  error) {
+						JOptionPane.showMessageDialog(null, "Invalid PORT Details", "FaiLed Attempt", JOptionPane.ERROR_MESSAGE);
+					}
+				} catch (NumberFormatException  error) {
+					JOptionPane.showMessageDialog(null, "Invalid ID Details", "FaiLed Attempt", JOptionPane.ERROR_MESSAGE);
 					
 				}
-				// try {
-					
-				// 	if (UniqueID.isEmpty()){
-				// 		throw new NumberFormatException("ID Can't be empty");
-				// 	}
-				// 	int ID = Integer.parseInt(UniqueID);
-				// 	try {
-				// 		int PORT = Integer.parseInt(Port);
-				// 		try {
-					
-					
-				// 			JOptionPane.showMessageDialog(null,  "Connecting", "Attempting", JOptionPane.INFORMATION_MESSAGE);
-				// 			Socket socket = new Socket(IP, PORT);
-
-				// 			Client NewClient = new Client(socket, UniqueID);
-				// 			Window_2 info= new Window_2(NewClient);
-				// 			info.setVisible(true);
-				// 			setVisible(false);
-				// 			dispose();
-							
-				// 		} catch (IOException error) {
-				// 			JOptionPane.showMessageDialog(null, "Invalid IP Address / Server Unavailable", "FaiLed Attempt", JOptionPane.ERROR_MESSAGE);
-				// 			error.printStackTrace();
-							
-				// 		}
-				// 	} catch (NumberFormatException  error) {
-				// 		JOptionPane.showMessageDialog(null, "Invalid PORT Details", "FaiLed Attempt", JOptionPane.ERROR_MESSAGE);
-				// 	}
-				// } catch (NumberFormatException  error) {
-				// 	JOptionPane.showMessageDialog(null, "Invalid ID Details", "FaiLed Attempt", JOptionPane.ERROR_MESSAGE);
-					
-				// }
 
 			}
 			
