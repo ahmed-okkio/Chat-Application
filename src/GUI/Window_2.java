@@ -28,6 +28,7 @@ public class Window_2 extends JFrame {
 			isCoordinator = true;
 		}
 		this.client = client;
+		setTitle(client.username);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 665, 445);
 		contentPane = new JPanel();

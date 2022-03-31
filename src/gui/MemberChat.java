@@ -43,44 +43,14 @@ public class MemberChat extends JFrame {
 	
 	
 
-	/**
-	 * Launch the application.
-	 */
-	// public static void main(String[] args) {
-	// 	EventQueue.invokeLater(new Runnable() {
-	// 		public void run() {
-	// 			try {
-	// 				MemberChat frame = new MemberChat();
-	// 				frame.setVisible(true);
-	// 			} catch (Exception e) {
-	// 				e.printStackTrace();
-	// 			}
-	// 		}
-	// 	});
-	// }
-	
-	
-	/**
-	 * Create the frame.
-	 */
 
-	public void updateMessages(String location, String message) {
-		switch (location){
-			case "MAINROOM":
-				messageHistory = messageHistory + message+ "\n";
-				messageField.setText(messageHistory);
-				break;
-			case "MEMBER_1":
-				messageHistory = messageHistory + message + "\n";
-				messageField.setText(messageHistory);
-		}
-
-	}
 	public void updateChatLabel() {
 		M1_Label.setText(recipientID);
+		messageField.setText("Welcome to the private chat with: "+ recipientID);
 	}
 	public MemberChat(MainRoom mainRoom) {
 		this.mainRoom = mainRoom;
+		setTitle(mainRoom.client.username);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(400, 100, 664, 445);
 		contentPane = new JPanel();
@@ -137,8 +107,6 @@ public class MemberChat extends JFrame {
         });
 
 		contentPane.add(scroll2);
-
-
 		
 		JButton Send_Button = new JButton("Send");
 		Send_Button.setBounds(558, 309, 85, 89);
@@ -165,48 +133,6 @@ public class MemberChat extends JFrame {
 		Main_Button.setBounds(558, 36, 85, 49);
 		contentPane.add(Main_Button);
 		
-		// M2_Button = new JButton("Member 2");
-		// M2_Button.setFont(new Font("Tahoma", Font.PLAIN, 8));
-		// M2_Button.addActionListener(new ActionListener() {
-		// 	public void actionPerformed(ActionEvent e) {
-				
-		// 		if (M2_Button.isEnabled()) {
-		// 			Member_2 info= new Member_2();
-		// 			Member_2.main(null);
-					
-		// 		}
-		// 		else {
-		// 			JOptionPane.showMessageDialog(null, "No Button Pressed", "FaiLed Attempt", JOptionPane.ERROR_MESSAGE);
-						
-		// 		}
-		// 	}
-			
-		// });
-		
-		// M2_Button.setBounds(558, 113, 85, 49);
-		// contentPane.add(M2_Button);
-		
-		// M3_Button = new JButton("Member 3");
-		// M3_Button.setFont(new Font("Tahoma", Font.PLAIN, 8));
-		// M3_Button.addActionListener(new ActionListener() {
-		// 	public void actionPerformed(ActionEvent e) {
-				
-		// 		if (M3_Button.isEnabled()) {
-		// 			Member_3 info= new Member_3();
-		// 			Member_3.main(null);
-					
-		// 		}
-		// 		else {
-		// 			JOptionPane.showMessageDialog(null, "No Button Pressed", "FaiLed Attempt", JOptionPane.ERROR_MESSAGE);
-						
-		// 		}
-		// 	}
-			
-		// });
-		
-		// M3_Button.setBounds(558, 188, 85, 49);
-		// contentPane.add(M3_Button);
-		
 		Exit_Button = new JButton("Exit ");
 		Exit_Button.setFont(new Font("Tahoma", Font.PLAIN, 8));
 		Exit_Button.addActionListener(new ActionListener() {
@@ -232,10 +158,6 @@ public class MemberChat extends JFrame {
 		M1_Label.setBounds(256, 4, 85, 25);
 		contentPane.add(M1_Label);
 		
-		//comboBox = new JComboBox();
-		//comboBox.setModel(new DefaultComboBoxModel(new String[] {"Member 2", "Member 3"}));
-		//comboBox.setBounds(463, 8, 85, 21);
-		//contentPane.add(comboBox);
 	}
 	
 	

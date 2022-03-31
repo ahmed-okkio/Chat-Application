@@ -127,7 +127,7 @@ public class Client {
                 while(socket.isConnected()) {
                     try {
                         rawMessage = bufferedReader.readLine();
-                        System.out.println("RAW MESSAGE: " + rawMessage);
+                        // System.out.println("RAW MESSAGE: " + rawMessage);
                         messageFromChat = rawMessage.split(",");
                         messageType = messageFromChat[0];
                         message = messageFromChat[1];
@@ -148,17 +148,6 @@ public class Client {
                             // INDEX 1 = recipient, 2 = sender, 3 = message
                             if(messageFromChat[1].equals(username)) {
                                 mainRoom.updateMessages(messageFromChat[2],messageFromChat[3]);
-                                // for(int i = 0; i<members.size(); i++) {
-
-                                //     if(members.get(i).ID.equals(messageFromChat[2])) {
-                                //         if(mainRoom == null) {
-                                //             p.P("MainRoom is null!");
-                                //         } else {
-                                //             mainRoom.updateMessages("MEMBER_"+Integer.toString(i),messageFromChat[3]);
-                                //         }
-                                //     }
-                                // }
-                                // // SEND FROM SENDER
                             }
                         } else {
                             if (mainRoom != null) {

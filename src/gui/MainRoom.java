@@ -59,28 +59,8 @@ public class MainRoom extends JFrame {
 		public static final String MEMBER_ROOM_3 = "MemberRoom_3";
 	}
 	private MainRoom reference;
-	/**
-	 * Launch the application.
-	 */
-	// public static void main(String[] args) {
-	// 	EventQueue.invokeLater(new Runnable() {
-	// 		public void run() {
-	// 			try {
-	// 				Main_Room frame = new Main_Room();
-	// 				frame.setVisible(true);
-	// 			} catch (Exception e) {
-	// 				e.printStackTrace();
-	// 			}
-	// 		}
-	// 	});
-	// }
-
-	/**
-	 * Create the frame.
-	 */
 
 	public void updateMessages(String location, String message) {
-		p.P("LOCATION" + location);
 		if (location.equals("MAINROOM")){
 			messageHistory = messageHistory + message+ "\n";
 			messageField.setText(messageHistory);
@@ -151,6 +131,7 @@ public class MainRoom extends JFrame {
 		if(client.role == 1) {
 			isCoordinator = true;
 		}
+		setTitle(client.username);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 664, 445);
 		contentPane = new JPanel();
@@ -225,8 +206,6 @@ public class MainRoom extends JFrame {
         });
 
 		contentPane.add(scroll2);
-
-
 		
 		JButton Send_Button = new JButton("Send");
 		Send_Button.setBounds(558, 309, 85, 89);
@@ -248,71 +227,12 @@ public class MainRoom extends JFrame {
 				}
 			}
 		});
+
 		Server_Button.setBounds(558, 22, 85, 49);
 		if(isCoordinator) {
 			contentPane.add(Server_Button);
 		}
 		
-		// M1_Button = new JButton("Member 1");
-		// M1_Button.setFont(new Font("Tahoma", Font.PLAIN, 8));
-		// M1_Button.addActionListener(new ActionListener() {
-		// 	public void actionPerformed(ActionEvent e) {
-				
-		// 		if (M1_Button.isEnabled()) {
-		// 			MemberChat info= new MemberChat(reference);
-		// 			info.setVisible(true);
-		// 			setVisible(false);
-		// 		}
-		// 		else {
-		// 			JOptionPane.showMessageDialog(null, "No Button Pressed", "FaiLed Attempt", JOptionPane.ERROR_MESSAGE);
-
-		// 		}
-		// 	}
-			
-		// });
-		
-		// M1_Button.setBounds(558, 91, 85, 49);
-		
-		
-		// M2_Button = new JButton("Member 2");
-		// M2_Button.setFont(new Font("Tahoma", Font.PLAIN, 8));
-		// M2_Button.addActionListener(new ActionListener() {
-		// 	public void actionPerformed(ActionEvent e) {
-				
-		// 		if (M2_Button.isEnabled()) {
-		// 			Member_2 info= new Member_2();
-		// 			Member_2.main(null);
-					
-		// 		}
-		// 		else {
-		// 			JOptionPane.showMessageDialog(null, "No Button Pressed", "FaiLed Attempt", JOptionPane.ERROR_MESSAGE);
-						
-		// 		}
-		// 	}
-			
-		// });
-		
-		// M2_Button.setBounds(558, 161, 85, 49);
-		
-		
-		// M3_Button = new JButton("Member 3");
-		// M3_Button.setFont(new Font("Tahoma", Font.PLAIN, 8));
-		// M3_Button.addActionListener(new ActionListener() {
-		// 	public void actionPerformed(ActionEvent e) {
-				
-		// 		if (M3_Button.isEnabled()) {
-		// 			Member_3 info= new Member_3();
-		// 			Member_3.main(null);
-					
-		// 		}
-		// 		else {
-		// 			JOptionPane.showMessageDialog(null, "No Button Pressed", "FaiLed Attempt", JOptionPane.ERROR_MESSAGE);
-						
-		// 		}
-		// 	}
-			
-		// });
-		// M3_Button.setBounds(558, 233, 85, 49);
 
 		
 		JButton Exit_Button = new JButton("Exit ");
@@ -341,12 +261,9 @@ public class MainRoom extends JFrame {
 		lblNewLabel.setBounds(253, 4, 85, 25);
 		contentPane.add(lblNewLabel);
 		
-		//JComboBox comboBox = new JComboBox();
-		//comboBox.setModel(new DefaultComboBoxModel(new String[] {"Member 1", "Member 2", "Member 3"}));
-		//comboBox.setToolTipText("");
-		//comboBox.setBounds(455, 8, 93, 21);
-		//contentPane.add(comboBox);
+
 		client.mainRoom = this;
 		this.reference = this;
+		updateMessages("MAINROOM","Welcome to the main room.");
 	}
 }
