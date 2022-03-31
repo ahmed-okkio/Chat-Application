@@ -28,7 +28,6 @@ import javax.swing.InputMap;
 
 import backend.Client;
 import backend.Client.MemberState;
-import t.p;
 
 public class MainRoom extends JFrame {
 

@@ -10,7 +10,7 @@ import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.DefaultCaret;
 
-import t.p;
+
 
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
