@@ -21,28 +21,8 @@ public class Window_2 extends JFrame {
 	public boolean isCoordinator = false;
 	private Client client;
 
-	/**
-	 * Launch the application.
-	 */
-	
-	
 
-//	public static void main(String[] args) {
-//		EventQueue.invokeLater(new Runnable() {
-//			public void run() {
-//				try {
-//					Window_2 frame = new Window_2();
-//					frame.setVisible(true);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		});
-//	}
-
-	/**
-	 * Create the frame.
-	 */
+	
 	public Window_2(Client client) {
 		if(client.role == 1) {
 			isCoordinator = true;
