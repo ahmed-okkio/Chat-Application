@@ -93,7 +93,22 @@ public class Client {
                 bufferedWriter.newLine();
                 bufferedWriter.flush();
                 
-                mainRoom.updateMessages(MainRoom.Rooms.MAIN_ROOM,username + ": "+ message);
+                mainRoom.updateMessages(MainRoom.Rooms.MAIN_ROOM,"You: "+ message);
+            }
+        } catch (IOException error) {
+            shutdownClient(socket, bufferedReader, bufferedWriter);
+        }
+        
+    }
+    public void sendPrivateMessageUI(String recipient, String message) {
+        try {
+            if ( socket.isConnected()) {
+                bufferedWriter.write("PRIVATE,"+recipient+","+username +","+ username +": "+ message);
+                bufferedWriter.newLine();
+                bufferedWriter.flush();
+                
+                mainRoom.updateMessages(recipient,"You: "+ message);
+
             }
         } catch (IOException error) {
             shutdownClient(socket, bufferedReader, bufferedWriter);
@@ -112,7 +127,7 @@ public class Client {
                 while(socket.isConnected()) {
                     try {
                         rawMessage = bufferedReader.readLine();
-                        // System.out.println("RAW MESSAGE: " + rawMessage);
+                        System.out.println("RAW MESSAGE: " + rawMessage);
                         messageFromChat = rawMessage.split(",");
                         messageType = messageFromChat[0];
                         message = messageFromChat[1];
@@ -129,6 +144,22 @@ public class Client {
                                 keepAlive();
                             }
 
+                        } else if(messageType.equals("PRIVATE")) {
+                            // INDEX 1 = recipient, 2 = sender, 3 = message
+                            if(messageFromChat[1].equals(username)) {
+                                mainRoom.updateMessages(messageFromChat[2],messageFromChat[3]);
+                                // for(int i = 0; i<members.size(); i++) {
+
+                                //     if(members.get(i).ID.equals(messageFromChat[2])) {
+                                //         if(mainRoom == null) {
+                                //             p.P("MainRoom is null!");
+                                //         } else {
+                                //             mainRoom.updateMessages("MEMBER_"+Integer.toString(i),messageFromChat[3]);
+                                //         }
+                                //     }
+                                // }
+                                // // SEND FROM SENDER
+                            }
                         } else {
                             if (mainRoom != null) {
                                 mainRoom.updateMessages(messageType,message);
@@ -141,9 +172,11 @@ public class Client {
                                 members.clear();
                             }
                             if(messageFromChat[1].equals("UPDATESTATE")) {
-                                //INDEX 2 = ID, 3 = IP
-                                MemberState updatedMember = new MemberState(messageFromChat[2],messageFromChat[3]);
-                                members.add(updatedMember);
+                                if(!messageFromChat[2].equals(username)){
+                                    //INDEX 2 = ID, 3 = IP
+                                    MemberState updatedMember = new MemberState(messageFromChat[2],messageFromChat[3]);
+                                    members.add(updatedMember);
+                                }
                                 if (mainRoom != null) {
                                     mainRoom.updateMembersList();
                                 }
