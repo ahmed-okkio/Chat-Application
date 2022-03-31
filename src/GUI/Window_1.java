@@ -11,6 +11,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import java.awt.Font;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JTextField;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -28,6 +29,7 @@ public class Window_1 extends JFrame {
 	private JTextField ID_Field;
 	private JTextField ip_Address;
 	private JTextField Port_Field;
+	JDialog dialogBox;
 
 
 
@@ -97,19 +99,14 @@ public class Window_1 extends JFrame {
 					try {
 						int PORT = Integer.parseInt(Port);
 						try {
-					
-					
-							JOptionPane.showMessageDialog(null,  "Connecting", "Attempting", JOptionPane.INFORMATION_MESSAGE);
-							Socket socket = new Socket(IP, PORT);
 
+
+							Socket socket = new Socket(IP, PORT);
 							Client NewClient = new Client(socket, UniqueID);
-							Window_2 info= new Window_2(NewClient);
-							info.setVisible(true);
-							setVisible(false);
-							dispose();
-							
+
+							InitializeChat(NewClient);
 						} catch (IOException error) {
-							JOptionPane.showMessageDialog(null, "Invalid IP Address / Server Unavailable", "FaiLed Attempt", JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog(null, "Invalid IP Address / Server Unavailable", "FaiLed Attempt", JOptionPane.ERROR_MESSAGE);		
 							error.printStackTrace();
 							
 						}

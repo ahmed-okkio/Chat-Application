@@ -59,7 +59,7 @@ public class MainRoom extends JFrame {
 	}
 	private MainRoom reference;
 
-	public void updateMessages(String location, String message) {
+	public void deliverMessages(String location, String message) {
 		if (location.equals("MAINROOM")){
 			messageHistory = messageHistory + message+ "\n";
 			messageField.setText(messageHistory);
@@ -196,11 +196,10 @@ public class MainRoom extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                JTextArea txtArea = (JTextArea) e.getSource();
 
 				//SEND
-				client.sendMessageUI(txtArea.getText());
-                txtArea.setText("");
+				client.sendMessageUI(sendMessageField.getText());
+                sendMessageField.setText("");
             }
         });
 
@@ -208,6 +207,14 @@ public class MainRoom extends JFrame {
 		
 		JButton Send_Button = new JButton("Send");
 		Send_Button.setBounds(558, 309, 85, 89);
+		Send_Button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				//SEND
+				client.sendMessageUI(sendMessageField.getText());
+                sendMessageField.setText("");
+			}
+		});
 		contentPane.add(Send_Button);
 		
 		Server_Button = new JButton("Server Info");
@@ -216,8 +223,9 @@ public class MainRoom extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				
 				if (Server_Button.isEnabled()) {
-					Server_Info info= new Server_Info();
-					Server_Info.main(null);
+					ServerInfo info= new ServerInfo(reference,client.members);
+					info.setVisible(true);
+					setVisible(false);
 					
 				}
 				else {
@@ -263,6 +271,6 @@ public class MainRoom extends JFrame {
 
 		client.mainRoom = this;
 		this.reference = this;
-		updateMessages("MAINROOM","Welcome to the main room.");
+		deliverMessages("MAINROOM","Welcome to the main room.");
 	}
 }

@@ -44,7 +44,7 @@ public class ClientHandler implements Runnable{
             }
 
 
-            this.IP = socket.getRemoteSocketAddress().toString();
+            this.IP = socket.getRemoteSocketAddress().toString().substring(1);
             assignClientRole(2);
             clientHandlers.add(this);
             checkClientAlive();

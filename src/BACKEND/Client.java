@@ -20,13 +20,13 @@ public class Client {
     private Socket socket;
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
-    public MainRoom mainRoom = null;
-
-    public String username;
-    public String memberUsernames[];
     private Timer timer = new Timer();
+    
+    public String username;
+    public MainRoom mainRoom = null;
     // ROLES: 0 = Unassigned, 1 = Coordinator, 2 = Member
     public int role = 0;
+
     public class MemberState {
         public MemberState(String username, String address) {
             this.ID = username;
@@ -40,7 +40,6 @@ public class Client {
     public Client(Socket socket, String username) {
         try {
             this.socket = socket;
-            
             this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             this.username = username;
@@ -49,9 +48,11 @@ public class Client {
             bufferedWriter.write(username);
             bufferedWriter.newLine();
             bufferedWriter.flush();
-
+            
+            // Start listening for messages
             this.listenforMessage();
- 
+            
+            // Wait for role to be assigned by server before completing construction
             while (role == 0){
             }
 
@@ -61,17 +62,18 @@ public class Client {
         }
 
     }
+
+    // Enabling coordinator rights
     public void EnableCoordinator() {
-        // checkClientAlive();
         if (mainRoom != null) {
-            mainRoom.updateMessages(MainRoom.Rooms.MAIN_ROOM,"You are now the coordinator.");
+            mainRoom.deliverMessages(MainRoom.Rooms.MAIN_ROOM,"You are now the coordinator.");
             mainRoom.updateCoordinator(true);
             System.out.println("You are now the coordinator.");
         }
-        // requestMemberState();
     }
-
-    public void sendMessage() {
+    
+    // Send messages through CLI implementation
+    public void sendMessageCLI() {
         try {
             Scanner scanner = new Scanner(System.in);
             while ( socket.isConnected()) {
@@ -86,6 +88,8 @@ public class Client {
         }
 
     }
+
+    // Send messages through GUI implementation
     public void sendMessageUI(String message) {
         try {
             if ( socket.isConnected()) {
@@ -93,13 +97,15 @@ public class Client {
                 bufferedWriter.newLine();
                 bufferedWriter.flush();
                 
-                mainRoom.updateMessages(MainRoom.Rooms.MAIN_ROOM,"You: "+ message);
+                mainRoom.deliverMessages(MainRoom.Rooms.MAIN_ROOM,"You: "+ message);
             }
         } catch (IOException error) {
             shutdownClient(socket, bufferedReader, bufferedWriter);
         }
         
     }
+
+    // Send private message through GUI implementation
     public void sendPrivateMessageUI(String recipient, String message) {
         try {
             if ( socket.isConnected()) {
@@ -107,7 +113,7 @@ public class Client {
                 bufferedWriter.newLine();
                 bufferedWriter.flush();
                 
-                mainRoom.updateMessages(recipient,"You: "+ message);
+                mainRoom.deliverMessages(recipient,"You: "+ message);
 
             }
         } catch (IOException error) {
@@ -116,6 +122,7 @@ public class Client {
         
     }
     
+    // Listen for messages on a new thread
     public void listenforMessage() {
         new Thread(new Runnable() {
             @Override
@@ -127,19 +134,23 @@ public class Client {
                 while(socket.isConnected()) {
                     try {
                         rawMessage = bufferedReader.readLine();
+                        // Debug Line
                         // System.out.println("RAW MESSAGE: " + rawMessage);
                         messageFromChat = rawMessage.split(",");
                         messageType = messageFromChat[0];
-                        message = messageFromChat[1];
+
 
                         if(messageType.equals("ROLE")) {
-
-                            role = Integer.parseInt(message);
+                            // INDEX 1 = role
+                            role = Integer.parseInt(messageFromChat[1]);
                             if(role == 1) {
                                 EnableCoordinator();
                             } 
 
                         } else if(messageType.equals("PING")) {
+                            // INDEX 1 = userID
+                            // Clients only receive pings that belong to them.
+                            // This is an additional check to ensure clients only keep themselves alive when pinged.
                             if(messageFromChat[1].equals(username)) {
                                 keepAlive();
                             }
@@ -147,19 +158,23 @@ public class Client {
                         } else if(messageType.equals("PRIVATE")) {
                             // INDEX 1 = recipient, 2 = sender, 3 = message
                             if(messageFromChat[1].equals(username)) {
-                                mainRoom.updateMessages(messageFromChat[2],messageFromChat[3]);
+                                mainRoom.deliverMessages(messageFromChat[2],messageFromChat[3]);
                             }
                         } else {
                             if (mainRoom != null) {
-                                mainRoom.updateMessages(messageType,message);
+                                // INDEX 1 = message
+                                // All other message tpyes are passed onto the MainRoom where they are delivered where they belong.
+                                mainRoom.deliverMessages(messageType,messageFromChat[1]);
                             }
 
                         }
-
+                        // Handles commands from the server.
                         if (messageType.equals("COMMAND")) {
+                            // Cleans the state in preperation for the new state.
                             if(messageFromChat[1].equals("CLEANSTATE")) {
                                 members.clear();
                             }
+                            // Updates the state to the new state.
                             if(messageFromChat[1].equals("UPDATESTATE")) {
                                 if(!messageFromChat[2].equals(username)){
                                     //INDEX 2 = ID, 3 = IP
@@ -167,10 +182,10 @@ public class Client {
                                     members.add(updatedMember);
                                 }
                                 if (mainRoom != null) {
+                                    // Refresh the UI members list.
                                     mainRoom.updateMembersList();
                                 }
                             }
-                            
                         }
                     } catch (IOException error) {
                         shutdownClient(socket, bufferedReader, bufferedWriter);
@@ -180,6 +195,7 @@ public class Client {
         }).start();
     }
 
+    // Pings the server back to keep the connection live.
     public void keepAlive() {
         try {
             bufferedWriter.write("PONG," +username);
@@ -235,7 +251,7 @@ public class Client {
         Client client = new Client(socket, username);
 
         client.listenforMessage();
-        client.sendMessage();
+        client.sendMessageCLI();
 
         scanner.close();
     }
