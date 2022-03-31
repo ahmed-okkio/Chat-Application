@@ -147,7 +147,7 @@ public class Client {
                             if(role == 1) {
                                 EnableCoordinator();
                             } 
-
+                            
                         } else if(messageType.equals("PING")) {
                             // INDEX 1 = userID
                             // Clients only receive pings that belong to them.

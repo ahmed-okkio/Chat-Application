@@ -1,8 +1,5 @@
 package gui;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -10,24 +7,22 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.DefaultCaret;
-import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.awt.event.ActionEvent;
 import java.awt.Font;
 import javax.swing.JLabel;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.InputMap;
 
 import backend.Client;
-import backend.Client.MemberState;
+
 
 public class MainRoom extends JFrame {
 
@@ -48,6 +43,7 @@ public class MainRoom extends JFrame {
 	private boolean isCoordinator = false;
 	public static ArrayList<MemberChat> memberChats = new ArrayList<>();
 	private ArrayList<JButton> memberButtons = new ArrayList<>();
+	private static final SimpleDateFormat sdf3 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	public Client client;
 	
@@ -61,20 +57,23 @@ public class MainRoom extends JFrame {
 
 	// Sends the messages to their desired UI locations.
 	public void deliverMessages(String location, String message) {
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+		String currentTimeStamp = sdf3.format(timestamp);
+
 		if (location.equals("MAINROOM")){
-			messageHistory = messageHistory + message+ "\n";
+			messageHistory = messageHistory + currentTimeStamp+" "+message+ "\n";
 			messageField.setText(messageHistory);
 		}
 		if (location.equals(M1_Chat.recipientID)){
-			privateMessageHistory1 = privateMessageHistory1 + message + "\n";
+			privateMessageHistory1 = privateMessageHistory1 + currentTimeStamp+" "+message + "\n";
 			M1_Chat.messageField.setText(privateMessageHistory1);
 		}
 		if (location.equals(M2_Chat.recipientID)){
-			privateMessageHistory2 = privateMessageHistory2 + message + "\n";
+			privateMessageHistory2 = privateMessageHistory2 + currentTimeStamp+" "+message + "\n";
 			M2_Chat.messageField.setText(privateMessageHistory2);
 		}
 		if (location.equals(M3_Chat.recipientID)){
-			privateMessageHistory3 = privateMessageHistory3 + message + "\n";
+			privateMessageHistory3 = privateMessageHistory3 + currentTimeStamp+" "+message + "\n";
 			M3_Chat.messageField.setText(privateMessageHistory3);
 		}
 
