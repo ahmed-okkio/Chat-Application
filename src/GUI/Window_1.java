@@ -89,9 +89,7 @@ public class Window_1 extends JFrame {
 				String Port = Port_Field.getText();
 				String IP = ip_Address.getText();
 				
-				
 				try {
-					
 					if (UniqueID.isEmpty()){
 						throw new NumberFormatException("ID Can't be empty");
 					}
@@ -99,12 +97,14 @@ public class Window_1 extends JFrame {
 					try {
 						int PORT = Integer.parseInt(Port);
 						try {
-
-
 							Socket socket = new Socket(IP, PORT);
 							Client NewClient = new Client(socket, UniqueID);
+							if(NewClient.role == -1) {
+								JOptionPane.showMessageDialog(null, "ID already exists on server", "Invalid ID", JOptionPane.ERROR_MESSAGE);
+							} else {
+								InitializeChat(NewClient);
+							}
 
-							InitializeChat(NewClient);
 						} catch (IOException error) {
 							JOptionPane.showMessageDialog(null, "Invalid IP Address / Server Unavailable", "FaiLed Attempt", JOptionPane.ERROR_MESSAGE);		
 							error.printStackTrace();

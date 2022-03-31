@@ -23,31 +23,36 @@ public class ClientHandler implements Runnable{
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
     private Timer timer = new Timer();
+    
     private String clientUsername;
     private String IP;
-    public int pingAttempts = 3;
+    private int pingAttempts = 3;
     private boolean isConnected = false;
 
     public ClientHandler(Socket socket) {
         try {
             this.socket = socket;
-            
             this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            
             this.clientUsername = bufferedReader.readLine();
+            this.IP = socket.getRemoteSocketAddress().toString().substring(1);
+
+            // Checking if the new connection contains a duplicate username.
             for (ClientHandler clientHandler : clientHandlers) {
                 if( clientHandler.clientUsername.equals(this.clientUsername)) {
+                    // Refuse connection and inform client of the reason.
+                    assignClientRole(-1);
                     shutdownClientHandler(socket, bufferedReader, bufferedWriter);
-                    //TODO: Tell client why hes kicked.
+                    return;
                 }
             }
 
-
-            this.IP = socket.getRemoteSocketAddress().toString().substring(1);
+            // Assign role.
             assignClientRole(2);
             clientHandlers.add(this);
+            // Initiate client pinging.
             checkClientAlive();
+            // Push member state to client.
             updateState();
     
             isConnected = true;
@@ -71,10 +76,12 @@ public class ClientHandler implements Runnable{
                 messageFromChat = rawMessage.split(",");
                 messageType = messageFromChat[0];
                 message = messageFromChat[1];
-    
-                 if(messageType.equals("PONG")) {
+                
+                // On receiving client KeepAlive reset the client ping attempts back to 3.
+                if(messageType.equals("PONG")) {
                     pingAttempts = 3;
                 } else {
+                    // All other messages are broadcasted to all members.
                     broadcastMessage(rawMessage);
                 }
             } catch (IOException error) {
@@ -83,6 +90,7 @@ public class ClientHandler implements Runnable{
         }
     }
 
+    // Responsible for broadcasting messages to all connected clients.
     public void broadcastMessage(String message) {
         for (ClientHandler clientHandler : clientHandlers) {
             try {
@@ -97,21 +105,29 @@ public class ClientHandler implements Runnable{
     }
 
     private void assignClientRole(int role) {
-        // ROLES: 0 = Unassigned, 1 = Coordinator, 2 = Member
         try {
-            if (clientHandlers.isEmpty()) {
-                this.bufferedWriter.write("ROLE," + 1);
-                this.bufferedWriter.newLine();
-                this.bufferedWriter.flush();
-            } else {
+            // ROLES: 0 = Unassigned, 1 = Coordinator, 2 = Member
+            if(role == -1) {
                 this.bufferedWriter.write("ROLE," + role);
                 this.bufferedWriter.newLine();
                 this.bufferedWriter.flush();
+            } else {
+
+                if (clientHandlers.isEmpty()) {
+                    this.bufferedWriter.write("ROLE," + 1);
+                    this.bufferedWriter.newLine();
+                    this.bufferedWriter.flush();
+                } else {
+                    this.bufferedWriter.write("ROLE," + role);
+                    this.bufferedWriter.newLine();
+                    this.bufferedWriter.flush();
+                }
             }
         } catch (IOException error) {
         }
     }
 
+    // Updates state for all clients.
     private void updateState() {
         if(!clientHandlers.isEmpty()) {
 
@@ -140,6 +156,7 @@ public class ClientHandler implements Runnable{
         }
     }
 
+    // Initiates client pinging every 3000ms.
     private void checkClientAlive() {
         timer.schedule(new TimerTask() {
             @Override
@@ -163,10 +180,7 @@ public class ClientHandler implements Runnable{
         }, 0, 3000);
     }
 
-    public void updateMemberState() {
-
-    }
-
+    // Disconnects the client.
     public void removeClientHandler() {
         broadcastMessage("MAINROOM,"+clientUsername + " has left the room.");
         if(clientHandlers.size() > 1 && clientHandlers.get(0) == this) {
@@ -177,12 +191,14 @@ public class ClientHandler implements Runnable{
         updateState();
     }
 
+    // Cleans up readers,writers,timers and socket on shutdown.
     public void shutdownClientHandler(Socket socket, BufferedReader bufferedReader, BufferedWriter bufferedWriter) {
         isConnected = false;
         removeClientHandler();
         try {
             if ( timer != null) {
                 timer.cancel();
+                timer = null;
             }
             if ( bufferedReader != null) {
                 bufferedReader.close();

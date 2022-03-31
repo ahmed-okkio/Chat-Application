@@ -72,35 +72,6 @@ public class Window_2 extends JFrame {
 		});
 		
 		Main_Button.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		contentPane.add(Main_Button);
-		
-		// JButton Server_Button = new JButton("Server Info");
-		// Server_Button.setBounds(236, 265, 170, 45);
-
-		// Server_Button.addActionListener(new ActionListener() {
-		// 	public void actionPerformed(ActionEvent e) {
-				
-		// 		if (Server_Button.isEnabled()) {
-		// 			Server_Info info= new Server_Info();
-		// 			Server_Info.main(null);
-					
-		// 		}
-		// 		else {
-		// 			JOptionPane.showMessageDialog(null, "No Button Pressed", "FaiLed Attempt", JOptionPane.ERROR_MESSAGE);
-						
-		// 		}
-		// 	}
-			
-		// });
-
-		// Server_Button.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		
-		// if (isCoordinator) {
-			
-		// 	contentPane.add(Server_Button);
-			
-			
-		// }
-		
+		contentPane.add(Main_Button);	
 	}
 }

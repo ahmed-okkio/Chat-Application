@@ -54,7 +54,9 @@ public class Client {
             
             // Wait for role to be assigned by server before completing construction
             while (role == 0){
+                System.out.println("Awaiting Role");
             }
+
 
             System.out.println("Welcome to the chat room.");
         } catch (IOException error) {
@@ -130,7 +132,6 @@ public class Client {
                 String messageFromChat[];
                 String rawMessage;
                 String messageType;
-                String message;
                 while(socket.isConnected()) {
                     try {
                         rawMessage = bufferedReader.readLine();
@@ -206,16 +207,6 @@ public class Client {
             error.printStackTrace();
         }
     }
-    public void requestClientHandlerShutdown() {
-        try {
-            bufferedWriter.write("COMMAND," + "SHUTDOWN,"+username);
-            bufferedWriter.newLine();
-            bufferedWriter.flush();
-        } catch (IOException error) {
-            // shutdownClient(socket, bufferedReader, bufferedWriter);
-            error.printStackTrace();
-        }  
-    }
 
     public void shutdownClient(Socket socket, BufferedReader bufferedReader, BufferedWriter bufferedWriter) {
         try {
@@ -233,6 +224,7 @@ public class Client {
         }
     }
 
+    // For CLI implementation
     public static void main(String[] args) throws IOException{
         Scanner scanner = new Scanner(System.in);
 
@@ -241,7 +233,6 @@ public class Client {
 
         System.out.println("Enter the server IP address: ");
         String ip_address = scanner.nextLine();
-        // System.out.println(ip_address);
 
         System.out.println("Enter the server port: ");
         String port = "25565";

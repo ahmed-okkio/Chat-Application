@@ -59,6 +59,7 @@ public class MainRoom extends JFrame {
 	}
 	private MainRoom reference;
 
+	// Sends the messages to their desired UI locations.
 	public void deliverMessages(String location, String message) {
 		if (location.equals("MAINROOM")){
 			messageHistory = messageHistory + message+ "\n";
@@ -79,6 +80,7 @@ public class MainRoom extends JFrame {
 
 	}
 
+	// Enables coodrinator functions in the UI.
 	public void updateCoordinator(boolean isCoordinator) {
 		if( isCoordinator) {
 			contentPane.add(Server_Button);
@@ -89,6 +91,7 @@ public class MainRoom extends JFrame {
 		}
 	}
 
+	// Updates the members list (buttons) to reflect the new members list dynamically.
 	public void updateMembersList() {
 		int y = 90;
 		for (JButton button : memberButtons) {
