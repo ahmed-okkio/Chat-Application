@@ -60,20 +60,22 @@ public class ClientHandler implements Runnable{
     
     @Override
     public void run() {
+        String rawMessage;
         String messageFromChat[];
         String messageType;
         String message;
 
         while(isConnected) {
             try {
-                messageFromChat = bufferedReader.readLine().split(",");
+                rawMessage = bufferedReader.readLine();
+                messageFromChat = rawMessage.split(",");
                 messageType = messageFromChat[0];
                 message = messageFromChat[1];
     
                  if(messageType.equals("PONG")) {
                     pingAttempts = 3;
                 } else {
-                    broadcastMessage(messageType + "," + message);
+                    broadcastMessage(rawMessage);
                 }
             } catch (IOException error) {
                 

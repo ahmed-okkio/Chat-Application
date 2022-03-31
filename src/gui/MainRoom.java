@@ -32,17 +32,23 @@ import t.p;
 
 public class MainRoom extends JFrame {
 
-	public static ArrayList<MemberChat> memberChats = new ArrayList<>();
 	private String messageHistory = "";
+	private String privateMessageHistory1 = "";
+	private String privateMessageHistory2= "";
+	private String privateMessageHistory3 = "";
 	private JPanel contentPane;
 	private JTextArea messageField;
 	private JTextArea sendMessageField;
 	private JButton Server_Button;
 	private JButton M1_Button;
+	MemberChat M1_Chat;
 	private JButton M2_Button;
+	MemberChat M2_Chat;
 	private JButton M3_Button;
-	private ArrayList<JButton> memberButtons = new ArrayList<>();
+	MemberChat M3_Chat;
 	private boolean isCoordinator = false;
+	public static ArrayList<MemberChat> memberChats = new ArrayList<>();
+	private ArrayList<JButton> memberButtons = new ArrayList<>();
 
 	public Client client;
 	
@@ -74,14 +80,22 @@ public class MainRoom extends JFrame {
 	 */
 
 	public void updateMessages(String location, String message) {
-		switch (location){
-			case "MAINROOM":
-				messageHistory = messageHistory + message+ "\n";
-				messageField.setText(messageHistory);
-				break;
-			case "MEMBER_1":
-				messageHistory = messageHistory + message + "\n";
-				messageField.setText(messageHistory);
+		p.P("LOCATION" + location);
+		if (location.equals("MAINROOM")){
+			messageHistory = messageHistory + message+ "\n";
+			messageField.setText(messageHistory);
+		}
+		if (location.equals(M1_Chat.recipientID)){
+			privateMessageHistory1 = privateMessageHistory1 + message + "\n";
+			M1_Chat.messageField.setText(privateMessageHistory1);
+		}
+		if (location.equals(M2_Chat.recipientID)){
+			privateMessageHistory2 = privateMessageHistory2 + message + "\n";
+			M2_Chat.messageField.setText(privateMessageHistory2);
+		}
+		if (location.equals(M3_Chat.recipientID)){
+			privateMessageHistory3 = privateMessageHistory3 + message + "\n";
+			M3_Chat.messageField.setText(privateMessageHistory3);
 		}
 
 	}
@@ -102,14 +116,20 @@ public class MainRoom extends JFrame {
 			contentPane.remove(button);
 		}
 		for(int i = 0; i < client.members.size(); i++) {
+			if(client.members.get(i).ID.equals(client.username)){continue;}
+			
+			memberChats.get(i).recipientID = client.members.get(i).ID;
+			memberChats.get(i).updateChatLabel();
+
 			JButton button = memberButtons.get(i);
 			button.setText(client.members.get(i).ID);
+			button.putClientProperty("index", i);
 			button.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					
 					if (M1_Button.isEnabled()) {
-						MemberChat info= new MemberChat(reference);
-						info.setVisible(true);
+						int memberIndex = (Integer)((JButton)e.getSource()).getClientProperty( "index" );
+						
+						memberChats.get(memberIndex).setVisible(true);
 						setVisible(false);
 					}
 					else {
@@ -139,15 +159,25 @@ public class MainRoom extends JFrame {
 		contentPane.setLayout(null);
 		
 		M1_Button = new JButton("Member 1");
+		M1_Chat = new MemberChat(this);
 		M1_Button.setFont(new Font("Tahoma", Font.PLAIN, 8));
 		memberButtons.add(M1_Button);
+		memberChats.add(M1_Chat);
+
 		M2_Button = new JButton("Member 2");
+		M2_Chat = new MemberChat(this);
 		M2_Button.setFont(new Font("Tahoma", Font.PLAIN, 8));
 		memberButtons.add(M2_Button);
+		memberChats.add(M2_Chat);
+
 		M3_Button = new JButton("Member 3");
+		M3_Chat = new MemberChat(this);
 		M3_Button.setFont(new Font("Tahoma", Font.PLAIN, 8));
 		memberButtons.add(M3_Button);
+		memberChats.add(M3_Chat);
+
 		updateMembersList();
+
 		messageField = new JTextArea();
 		
 		messageField.setEditable(false);

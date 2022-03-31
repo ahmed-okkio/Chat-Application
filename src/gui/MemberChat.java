@@ -9,6 +9,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.DefaultCaret;
+
+import t.p;
+
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.JButton;
@@ -26,14 +29,17 @@ import javax.swing.InputMap;
 public class MemberChat extends JFrame {
 
 	private JPanel contentPane;
+	private String messageHistory = "";
 	private JTextArea sendMessageField;
-	private JTextArea messageField;
+	public JTextArea messageField;
 	private JButton Main_Button;
 	private JButton M2_Button;
 	private JButton M3_Button;
 	private JButton Exit_Button;
 	private JLabel M1_Label;
 	private JComboBox comboBox;
+	public String recipientID;
+	private MainRoom mainRoom = null;
 	
 	
 
@@ -57,7 +63,24 @@ public class MemberChat extends JFrame {
 	/**
 	 * Create the frame.
 	 */
+
+	public void updateMessages(String location, String message) {
+		switch (location){
+			case "MAINROOM":
+				messageHistory = messageHistory + message+ "\n";
+				messageField.setText(messageHistory);
+				break;
+			case "MEMBER_1":
+				messageHistory = messageHistory + message + "\n";
+				messageField.setText(messageHistory);
+		}
+
+	}
+	public void updateChatLabel() {
+		M1_Label.setText(recipientID);
+	}
 	public MemberChat(MainRoom mainRoom) {
+		this.mainRoom = mainRoom;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(400, 100, 664, 445);
 		contentPane = new JPanel();
@@ -106,7 +129,9 @@ public class MemberChat extends JFrame {
                 JTextArea txtArea = (JTextArea) e.getSource();
 
 				//SEND
-				mainRoom.client.sendMessageUI(txtArea.getText());
+				if(mainRoom != null) {
+					mainRoom.client.sendPrivateMessageUI(recipientID,txtArea.getText());
+				}
                 txtArea.setText("");
             }
         });
@@ -202,7 +227,7 @@ public class MemberChat extends JFrame {
 		Exit_Button.setBounds(10, 10, 67, 19);
 		contentPane.add(Exit_Button);
 		
-		M1_Label = new JLabel("MEMBER 1");
+		M1_Label = new JLabel("MEMBER");
 		M1_Label.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		M1_Label.setBounds(256, 4, 85, 25);
 		contentPane.add(M1_Label);
