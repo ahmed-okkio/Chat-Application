@@ -93,7 +93,6 @@ public class Window_1 extends JFrame {
 					if (UniqueID.isEmpty()){
 						throw new NumberFormatException("ID Can't be empty");
 					}
-					int ID = Integer.parseInt(UniqueID);
 					try {
 						int PORT = Integer.parseInt(Port);
 						try {
@@ -119,7 +118,6 @@ public class Window_1 extends JFrame {
 				}
 
 			}
-			
 			
 		});
 				
